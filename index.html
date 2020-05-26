@@ -12,6 +12,7 @@
       touch-action: manipulation;
     }
     .remote-container {
+      position: relative;
       background: black;
       height:   auto;
       padding: 20px;
@@ -194,13 +195,42 @@
       font-size: 21px;
       color: white;
     }
+    .loading {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.3);
+      /*dim the background*/
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      color:black;
+      text-align: center;
+    }
+
+    .body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form {
+      margin-bottom: 15px;
+    }
 
   </style>
   <meta charset="UTF-8">
   <title>TV Remote</title>
 </head>
 <body class="body">
-  <div class="remote-container">
+  <form class="form" onsubmit="return fetchRemoteCodes();" method="post">
+    <label for="TVIP">TV IP:</label>
+    <input type="text" id="TVIP" name="TVIP"><br><br>
+
+    <label for="TVPSK">TV PSK:</label>
+    <input type="password" id="TVPSK" name="TVPSK"><br><br>
+
+    <input type="submit" value="Submit">
+  </form>
+  <div id="remote-container" class="remote-container">
     <div class="button-container-static">
       <button id="Input" class="button input">Input</button>
       <button id="Assists" class="button mic">Mic</button>
@@ -238,7 +268,7 @@
       <button id="ActionMenu" class="button action_menu" onclick="">ACTION</button>
       <button id="ApplicationLauncher" class="button apps" onclick="">APPS</button>
       <button id="GGuide" class="button guide" onclick="">GUIDE</button>
-      <button id="Back" class="button back" onclick="">BACK</button>
+      <button id="Return" class="button back" onclick="">BACK</button>
       <button id="Tv" class="button tv" onclick="">TV</button>
       <button id="Home" class="button home" onclick="">HOME</button>
     </div>
@@ -277,10 +307,24 @@
 
   </div>
   <script>
-    const tvUrl = 'http://192.168.0.195';
+    function getTvIpInput() {
+      return document.getElementById('TVIP').value;
+    }
 
-    function fetchRemoteCodes() {
-      const url = `${tvUrl}/sony/system`;
+    function getTvPskInput() {
+      return document.getElementById('TVPSK').value;
+    }
+
+    function getLoadingElement() {
+      let div = document.createElement('div');
+      // div.textContent = "Loading...";
+      div.setAttribute('class', 'loading');
+      div.setAttribute('id', 'loading');
+      return div;
+    }
+
+    function fetchRemoteCodes(form) {
+      const url = `http://${getTvIpInput()}/sony/system`;
       const data = {
         'method': "getRemoteControllerInfo",
         'params': [],
@@ -288,9 +332,13 @@
         'version': "1.0"
       };
 
+      const loadingElement = getLoadingElement();
+      document.getElementById('remote-container').appendChild(loadingElement);
+
       fetch(url, {method: 'POST', body: JSON.stringify(data)})
         .then(response => response.json())
         .then(({result}) => {
+          document.getElementById('remote-container').removeChild(loadingElement);
           const commands = result[1];
 
           commands.forEach(command => {
@@ -310,28 +358,35 @@
             }
           });
         })
+        .catch(() => {
+          document.getElementById('remote-container').removeChild(loadingElement);
+          alert('Error getting command list for your TV. Please check your credentials!')
+        });
+
+      return false;
     }
 
     function sendRemoteCommand(command) {
-      const url = `${tvUrl}/sony/IRCC`;
+      const url = `http://${getTvIpInput()}/sony/IRCC`;
 
       fetch(url, {
         method: 'POST',
         headers: {
         'Content-Type': 'text/xml; charset=UTF-8',
-        'X-Auth-PSK': '132911',
+        'X-Auth-PSK': getTvPskInput(),
         'SOAPACTION': '"urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"'
         },
         body: `<?xml version=\"1.0\"?><s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><u:X_SendIRCC xmlns:u=\"urn:schemas-sony-com:service:IRCC:1\"><IRCCCode>${command}</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>`
       })
-        .then(response => {
-          if (response.status !== 200) {
-            alert('Failed to send TV command!');
-          }
-        })
+      .then(response => {
+        if (response.status !== 200) {
+          alert('Failed to send TV command!');
+        }
+      })
+      .catch(() => {
+        alert('Error sending command. Please check your credentials!')
+      })
     }
-
-    fetchRemoteCodes()
   </script>
 </body>
 </html>
