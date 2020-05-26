@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <style type="text/css">
+    .body {
+      background: white;
+      display: flex;
+      align-items: center;
+      align-content: center;
+      padding: 20px;
+      touch-action: manipulation;
+    }
+    .remote-container {
+      background: black;
+      height:   auto;
+      padding: 20px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      width: 30%;
+      touch-action: manipulation;
+    }
+
+    .button {
+      border-width: 0;
+    }
+
+    .input, .mic, .power {
+      height: 75px;
+      width: 75px;
+      border-radius: 37px;
+      background: gray;
+      color: white;
+      font-size: 15px;
+      font-weight: 400;
+    }
+    .power {
+      background: green;
+    }
+    .mic {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    .digital_analog, .tv_radio, .exit, .ext_box_menu, .mute {
+      height: 35px;
+      border-radius: 7px;
+      background: dimgray;
+      color: white;
+      margin: 5px;
+    }
+    .mute {
+      height: 70px;
+      width: 70px;
+      font-size: 15px;
+      font-weight: 400;
+    }
+    .numpad {
+      width: 80px;
+      height: 40px;
+      border-radius: 10px;
+      background: gray;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .google_play, .netflix, .youtube {
+      height: 45px;
+      border-radius: 7px;
+      background: gray;
+      color: white;
+      width: 100%;
+      font-size: 15px;
+      font-weight: 400;
+    }
+    .youtube {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+    .netflix {
+      background: white;
+      color: red;
+    }
+
+    .youtube, .google_play {
+      background: red;
+    }
+
+    .action_menu, .apps, .guide, .back, .tv, .home {
+      width: 90px;
+      height: 36px;
+      background: gray;
+      color: white;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    .up, .down, .left, .right, .ok {
+      width: 65px;
+      height: 55px;
+      background: gray;
+      color: white;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    .volume_up, .volume_down, .program_up, .program_down {
+      width: 70px;
+      height: 100px;
+      background: gray;
+      color: white;
+      font-size: 21px;
+      font-weight: 400;
+    }
+
+    .volume_down {
+      border-bottom-left-radius: 13px;
+      border-bottom-right-radius: 13px;
+    }
+
+    .volume_up {
+      border-top-left-radius: 13px;
+      border-top-right-radius: 13px;
+    }
+
+    .program_down {
+      border-bottom-left-radius: 13px;
+      border-bottom-right-radius: 13px;
+    }
+
+    .program_up {
+      border-top-left-radius: 13px;
+      border-top-right-radius: 13px;
+    }
+
+    .button-container-static {
+      margin-top: 25px;
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      touch-action: manipulation;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 33% 33% 33%;
+      grid-row-gap: 10px;
+      justify-items: center;
+    }
+
+    .grid-arrow-container {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .grid-arrow-row {
+      display: grid;
+      grid-template-rows: 33% 33% 33%;
+      width: auto;
+    }
+
+    .grid-column-mute {
+      width: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .grid-column-program {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .grid-column-volume {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 5px;
+    }
+    .text {
+      font-size: 21px;
+      color: white;
+    }
+
+  </style>
+  <meta charset="UTF-8">
+  <title>TV Remote</title>
+</head>
+<body class="body">
+  <div class="remote-container">
+    <div class="button-container-static">
+      <button id="Input" class="button input">Input</button>
+      <button id="Assists" class="button mic">Mic</button>
+      <button id="TvPower" class="button power">Power</button>
+    </div>
+    <div class="button-container-static">
+      <button id="DigitalToggle" class="button digital_analog">Digital</button>
+      <button id="Tv_Radio" class="button tv_radio">TV/Radio</button>
+      <button id="Exit" class="button exit">Exit</button>
+      <button class="button ext_box_menu">Ext.Box</button>
+    </div>
+    <div class="button-container-static grid">
+      <button id="Num1" class="button numpad">1 ./</button>
+      <button id="Num2" class="button numpad">2 abc</button>
+      <button id="Num3" class="button numpad">3 def</button>
+
+      <button id="Num4" class="button numpad">4 ghi</button>
+      <button id="Num5" class="button numpad">5 jkl</button>
+      <button id="Num6" class="button numpad" onclick="">6 mno</button>
+
+      <button id="Num7" class="button numpad" onclick="">7 pqrs</button>
+      <button id="Num8" class="button numpad" onclick="">8 tuv</button>
+      <button id="Num9" class="button numpad" onclick="">9 wxyz</button>
+
+      <button id="Help" class="button numpad" onclick="">?</button>
+      <button id="Num0" class="button numpad" onclick="">0 _</button>
+      <button id="Teletext" class="button numpad" >=</button>
+    </div>
+    <div class="button-container-static">
+      <button id="GooglePlay" class="button google_play" onclick="">Google Play</button>
+      <button id="YouTube" class="button youtube" onclick="">Youtube</button>
+      <button id="Netflix" class="button netflix" onclick="">Netflix</button>
+    </div>
+    <div class="button-container-static grid">
+      <button id="ActionMenu" class="button action_menu" onclick="">ACTION</button>
+      <button id="ApplicationLauncher" class="button apps" onclick="">APPS</button>
+      <button id="GGuide" class="button guide" onclick="">GUIDE</button>
+      <button id="Back" class="button back" onclick="">BACK</button>
+      <button id="Tv" class="button tv" onclick="">TV</button>
+      <button id="Home" class="button home" onclick="">HOME</button>
+    </div>
+    <div class="button-container-static grid-arrow-container">
+      <button id="Left" class="button left" onclick="">ᐸ</button>
+
+      <div class="grid-arrow-row">
+        <button id="Up" class="button up" onclick="">ᐱ</button>
+        <button id="Confirm" class="button ok" onclick="">OK</button>
+        <button id="Down" class="button down" onclick="">ᐯ</button>
+      </div>
+
+      <button id="Right" class="button right" onclick="">ᐳ</button>
+    </div>
+    <div class="button-container-static grid">
+      <div class="grid-column-volume">
+        <span style="color: white">VOL</span>
+        <button id="VolumeUp" class="button volume_up" onclick="">+</button>
+        <button id="VolumeDown" class="button volume_down" onclick="">-</button>
+      </div>
+
+      <div class="grid-column-mute">
+        <button id="Mute" class="button mute" onclick="">mute</button>
+      </div>
+
+      <div class="grid-column-program">
+        <span style="color: white">PROG</span>
+        <button id="ChannelUp" class="button program_up" onclick="">+</button>
+        <button id="ChannelDown" class="button program_down" onclick="">-</button>
+      </div>
+    </div>
+    <div class="footer">
+      <span class="text">SONY</span>
+      <span class="text">TV</span>
+    </div>
+
+  </div>
+  <script>
+    const tvUrl = 'http://192.168.0.195';
+
+    function fetchRemoteCodes() {
+      const url = `${tvUrl}/sony/system`;
+      const data = {
+        'method': "getRemoteControllerInfo",
+        'params': [],
+        'id': 54,
+        'version': "1.0"
+      };
+
+      fetch(url, {method: 'POST', body: JSON.stringify(data)})
+        .then(response => response.json())
+        .then(({result}) => {
+          const commands = result[1];
+
+          commands.forEach(command => {
+            let buttonElement = document.getElementById(command.name);
+
+            if (!!buttonElement) {
+              buttonElement.addEventListener("click", () => {
+                console.log(command.name + ': ' + command.value);
+                sendRemoteCommand(command.value);
+                window.navigator.vibrate = window.navigator.vibrate || window.navigator.webkitVibrate || window.navigator.mozVibrate || window.navigator.msVibrate;
+
+                if (window.navigator.vibrate) {
+                  // vibration API supported
+                  navigator.vibrate(200);
+                }
+              });
+            }
+          });
+        })
+    }
+
+    function sendRemoteCommand(command) {
+      const url = `${tvUrl}/sony/IRCC`;
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'text/xml; charset=UTF-8',
+        'X-Auth-PSK': '132911',
+        'SOAPACTION': '"urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"'
+        },
+        body: `<?xml version=\"1.0\"?><s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><u:X_SendIRCC xmlns:u=\"urn:schemas-sony-com:service:IRCC:1\"><IRCCCode>${command}</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>`
+      })
+        .then(response => {
+          if (response.status !== 200) {
+            alert('Failed to send TV command!');
+          }
+        })
+    }
+
+    fetchRemoteCodes()
+  </script>
+</body>
+</html>
