@@ -221,7 +221,7 @@
   <title>TV Remote</title>
 </head>
 <body class="body">
-  <form class="form" onsubmit="return fetchRemoteCodes();" method="post">
+  <form class="form" onsubmit="return onFormSubmit();" method="post">
     <label for="TVIP">TV IP:</label>
     <input type="text" id="TVIP" name="TVIP"><br><br>
 
@@ -307,6 +307,29 @@
 
   </div>
   <script>
+    window.onload = () => {
+      const lastTvIp = window.localStorage.getItem("tvIp");
+      const lastTvPsk = window.localStorage.getItem("tvPsk");
+
+      if (lastTvIp) {
+        document.getElementById("TVIP").value = lastTvIp;
+      }
+
+      if (lastTvPsk) {
+        document.getElementById("TVPSK").value = lastTvPsk;
+      }
+
+      if (lastTvIp && lastTvPsk) {
+        fetchRemoteCodes();
+      }
+    }
+
+    function onFormSubmit() {
+      window.localStorage.setItem("tvIp", getTvIpInput());
+      window.localStorage.setItem("tvPsk", getTvPskInput());
+      fetchRemoteCodes();
+    }
+
     function getTvIpInput() {
       return document.getElementById('TVIP').value;
     }
@@ -317,13 +340,12 @@
 
     function getLoadingElement() {
       let div = document.createElement('div');
-      // div.textContent = "Loading...";
       div.setAttribute('class', 'loading');
       div.setAttribute('id', 'loading');
       return div;
     }
 
-    function fetchRemoteCodes(form) {
+    function fetchRemoteCodes() {
       const url = `http://${getTvIpInput()}/sony/system`;
       const data = {
         'method': "getRemoteControllerInfo",
@@ -334,6 +356,7 @@
 
       const loadingElement = getLoadingElement();
       document.getElementById('remote-container').appendChild(loadingElement);
+      console.log("fetching remote codes");
 
       fetch(url, {method: 'POST', body: JSON.stringify(data)})
         .then(response => response.json())
@@ -344,23 +367,27 @@
           commands.forEach(command => {
             let buttonElement = document.getElementById(command.name);
 
-            if (!!buttonElement) {
-              buttonElement.addEventListener("click", () => {
-                console.log(command.name + ': ' + command.value);
-                sendRemoteCommand(command.value);
-                window.navigator.vibrate = window.navigator.vibrate || window.navigator.webkitVibrate || window.navigator.mozVibrate || window.navigator.msVibrate;
+            const clickEvent = () => {
+              console.log(command.name + ': ' + command.value);
+              sendRemoteCommand(command.value);
+              window.navigator.vibrate = window.navigator.vibrate || window.navigator.webkitVibrate || window.navigator.mozVibrate || window.navigator.msVibrate;
 
-                if (window.navigator.vibrate) {
-                  // vibration API supported
-                  navigator.vibrate(200);
-                }
-              });
+              if (window.navigator.vibrate) {
+                // vibration API supported
+                navigator.vibrate(200);
+              }
+            };
+
+            if (!!buttonElement) {
+              buttonElement.removeEventListener("click", buttonElement.clickListener);
+              buttonElement.addEventListener("click", clickEvent);
+              buttonElement.clickListener = clickEvent;
             }
           });
         })
-        .catch(() => {
+        .catch((e) => {
           document.getElementById('remote-container').removeChild(loadingElement);
-          alert('Error getting command list for your TV. Please check your credentials!')
+          console.log(e);
         });
 
       return false;
@@ -383,7 +410,8 @@
           alert('Failed to send TV command!');
         }
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e);
         alert('Error sending command. Please check your credentials!')
       })
     }
